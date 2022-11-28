@@ -19,6 +19,10 @@ compileJava {
     options.release = 17
 }
 
+application {
+    mainClass = 'hexlet.code.App'
+}
+
 dependencies {
     implementation 'io.javalin:javalin:4.3.0'
     implementation 'org.slf4j:slf4j-simple:1.7.36'
