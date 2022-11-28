@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.controllers.RootController;
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
@@ -23,6 +24,10 @@ public final class App {
         templateEngine.addTemplateResolver(templateResolver);
 
         return templateEngine;
+    }
+
+    private static void addRoutes(Javalin app) {
+        app.get("/", RootController.welcome);
     }
 
 
