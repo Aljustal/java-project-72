@@ -11,7 +11,6 @@ import java.util.List;
 public class UrlController {
 
     public static Handler listUrls = ctx -> {
-
         List<Url> urls = new QUrl()
                 .orderBy()
                 .id.asc()
@@ -40,7 +39,7 @@ public class UrlController {
         Url url = new Url(urlFromPost);
         url.save();
         ctx.sessionAttribute("flash", "Страница успешно добавлена");
-        ctx.redirect("/");
+        ctx.redirect("/urls");
     };
 }
 

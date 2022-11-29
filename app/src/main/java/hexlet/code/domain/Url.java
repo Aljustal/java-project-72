@@ -6,6 +6,9 @@ import io.ebean.annotation.WhenCreated;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 @Entity
 public class Url extends Model {
 
@@ -30,7 +33,10 @@ public class Url extends Model {
         this.name = urlName;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
+    public String getCreatedAt() {
+        final String patternFORMAT = "dd.MM.yyyy HH:mm";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(patternFORMAT)
+                .withZone(ZoneId.systemDefault());
+        return formatter.format(this.createdAt);
     }
 }
