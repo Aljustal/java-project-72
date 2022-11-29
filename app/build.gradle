@@ -53,6 +53,8 @@ dependencies {
     testImplementation 'com.konghq:unirest-java:3.13.6'
 }
 
+sourceSets.main.java.srcDirs = ['src/main/java', 'build/generated/sources/annotationProcessor/java/main']
+
 test {
     useJUnitPlatform()
 }
