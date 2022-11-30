@@ -4,6 +4,7 @@ import hexlet.code.domain.Url;
 import hexlet.code.domain.query.QUrl;
 import io.javalin.http.Handler;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -27,19 +28,37 @@ public class UrlController {
                 .id.equalTo(id)
                 .findOne();
 
-        ctx.attribute("ursl", url);
+        ctx.attribute("url", url);
         ctx.render("urls/show.html");
     };
     public static Handler addUrl = ctx -> {
         String urlFromPost = ctx.formParam("url");
 
-        //assert urlFromPost != null;
-        //URL generalUrl = new URL(urlFromPost);
+        try {
+            assert urlFromPost != null;
+            URL generalUrl = new URL(urlFromPost);
+            String correctURL = generalUrl.getProtocol() + "://" + generalUrl.getAuthority();
 
-        Url url = new Url(urlFromPost);
-        url.save();
-        ctx.sessionAttribute("flash", "Страница успешно добавлена");
-        ctx.redirect("/urls");
+            Url checkUrl = new QUrl()
+                    .name.equalTo(correctURL)
+                    .findOne();
+
+            if (checkUrl != null) {
+                ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.redirect("/");
+                return;
+            }
+
+            Url url = new Url(correctURL);
+            url.save();
+
+            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.redirect("/urls");
+
+        } catch (MalformedURLException e) {
+            ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.redirect("/");
+        }
     };
 }
 
