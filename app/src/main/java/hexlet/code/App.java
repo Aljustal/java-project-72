@@ -38,7 +38,6 @@ public final class App {
             path("urls", () -> {
                 get(UrlController.listUrls);
                 post(UrlController.addUrl);
-//                get("new", ArticleController.newArticle);
                 path("{id}", () -> {
                     get(UrlController.showUrl);
                 });
@@ -47,7 +46,6 @@ public final class App {
     }
 
     public static Javalin getApp() {
-
         Javalin app = Javalin.create(config -> {
             config.enableDevLogging();
             JavalinThymeleaf.configure(getTemplateEngine());
