@@ -45,7 +45,6 @@ public class AppTest {
 
     @Test
     void testUrls() {
-
         // Выполняем GET запрос на адрес http://localhost:port/urls
         HttpResponse<String> response = Unirest
                 .get(baseUrl + "/urls")
@@ -61,7 +60,6 @@ public class AppTest {
 
     @Test
     void testNewUrl() {
-
         HttpResponse<String> response = Unirest
                 .get(baseUrl + "/url/new")
                 .asString();
@@ -96,7 +94,7 @@ public class AppTest {
         //assertThat(responsePost.getBody()).contains("Некорректный URL");
 
         Url actualUrl = new QUrl()
-                .name.equalTo("https://www.youtube.com\"")
+                .name.equalTo("httpppps://www.youtube.com")
                 .findOne();
         assertThat(actualUrl).isNull();
     }

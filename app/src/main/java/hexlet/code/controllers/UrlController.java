@@ -1,13 +1,20 @@
 package hexlet.code.controllers;
 
 import hexlet.code.domain.Url;
+import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
+
 import io.javalin.http.Handler;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 public class UrlController {
 
@@ -18,7 +25,7 @@ public class UrlController {
                 .findList();
 
         ctx.attribute("urls", urls);
-        ctx.render("urls/index.html");
+        ctx.render("urls/urls.html");
     };
 
     public static Handler showUrl = ctx -> {
@@ -45,7 +52,8 @@ public class UrlController {
 
             if (checkUrl != null) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
-                ctx.redirect("/");
+                ctx.sessionAttribute("flash-type", "danger");
+                ctx.redirect("/urls");
                 return;
             }
 
@@ -57,8 +65,40 @@ public class UrlController {
 
         } catch (MalformedURLException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
         }
+    };
+
+
+    public static Handler checkUrl = ctx -> {
+        long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
+
+        Url url = new QUrl()
+                .id.equalTo(id)
+                .findOne();
+
+        HttpResponse<String> response = Unirest
+                .get(url.getName())
+                .asString();
+
+        String content = response.getBody();
+
+        Document body = Jsoup.parse(content);
+
+        int statusCode = response.getStatus();
+        String title = body.title();
+        String h1 = body.selectFirst("h1") != null
+                ? Objects.requireNonNull(body.selectFirst("h1")).text()
+                : null;
+        String description = body.selectFirst("meta[name=description]") != null
+                ? Objects.requireNonNull(body.selectFirst("meta[name=description]")).attr("content")
+                : null;
+
+        UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
+        urlCheck.save();
+
+        ctx.redirect("/urls/" + id);
     };
 }
 
