@@ -35,12 +35,8 @@ public class Url extends Model {
     public void setName (String urlName) {
         this.name = urlName;
     }
-
-    public String getCreatedAt() {
-        final String patternFORMAT = "dd.MM.yyyy HH:mm";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(patternFORMAT)
-                .withZone(ZoneId.systemDefault());
-        return formatter.format(this.createdAt);
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
     public List<UrlCheck> getUrlChecks() {

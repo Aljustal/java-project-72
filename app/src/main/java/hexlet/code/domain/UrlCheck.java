@@ -38,12 +38,8 @@ public class UrlCheck extends Model {
     public long getId() {
         return id;
     }
-
-    public String getCreatedAt() {
-        final String patternFORMAT = "dd.MM.yyyy HH:mm";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(patternFORMAT)
-                .withZone(ZoneId.systemDefault());
-        return formatter.format(this.createdAt);
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
     public int getStatusCode() {

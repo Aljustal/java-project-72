@@ -44,7 +44,7 @@
                 </tr>
                 <tr>
                     <td>Дата создания</td>
-                    <td th:text="*{getCreatedAt()}"></td>
+                    <td th:text="*{#temporals.format(getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -64,14 +64,14 @@
                     <th class="col-2">Дата проверки</th>
                 </tr></thead>
                 <tbody>
-                <tr th:each="urlCheck : ${urlChecks}" th:object="${urlCheck}">
-                    <td th:text="*{getId()}"></td>
-                    <td th:text="*{getStatusCode()}"></td>
-                    <td th:text="${urlCheck.getTitle()}"></td>
-                    <td th:text="${urlCheck.getH1()}"></td>
-                    <td th:text="${urlCheck.getDescription()}"></td>
-                    <td th:text="${urlCheck.getCreatedAt()}"></td>
-                </tr>
+<!--                <tr th:each="urlCheck : ${urlChecks}" th:object="${urlCheck}">-->
+<!--                    <td th:text="*{getId()}"></td>-->
+<!--                    <td th:text="*{getStatusCode()}"></td>-->
+<!--                    <td th:text="${urlCheck.getTitle()}"></td>-->
+<!--                    <td th:text="${urlCheck.getH1()}"></td>-->
+<!--                    <td th:text="${urlCheck.getDescription()}"></td>-->
+<!--                    <td th:text="${urlCheck.getCreatedAt()}"></td>-->
+<!--                </tr>-->
                 </tbody>
             </table>
         </div>
