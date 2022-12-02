@@ -1,15 +1,26 @@
-# Настройки ORM
+# Так подключается с бд но не создается таблица URL_CHECK
 datasource:
-  # Задаём базу данных, к которой будет происходить подключение
   db:
     username: ""
     password: ""
     url: "jdbc:h2:./hexlet"
+ebean:
+  development:
+    migration:
+      run: true
 
+#Так падает ошибка
+#Caused by: io.ebean.datasource.DataSourceConfigurationException: Configuration error creating DataSource for the default Database. This typically means a missing application-test.ya
+#  ml or missing ebean-test dependency. See https://ebean.io/docs/trouble-shooting#datasource
+#
+#datasource:
+#  default: ${APP_ENV}
+#  development:
+#    username: ""
+#    password: ""
+#    url: "jdbc:h2:./hexlet"
+#
 #ebean:
 #  development:
-#    migration:
-#      run: true
-#  production:
 #    migration:
 #      run: true
