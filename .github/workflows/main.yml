@@ -10,9 +10,8 @@ jobs:
           distribution: temurin
           java-version: 17
       - name: Build with Gradle
-          uses: gradle/gradle-build-action@v2
+          run: make build
           with:
-            arguments: build
             build-root-directory: app
       - name: get coverage report
         uses: paambaati/codeclimate-action@v3.0.0
