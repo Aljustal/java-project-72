@@ -9,8 +9,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 public class UrlCheck extends Model {

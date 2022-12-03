@@ -48,16 +48,14 @@
                     <th class="col-1">Код ответа</th>
                 </tr>
                 </thead>
-                    <tbody>
-                    <tr th:each="url : ${urls}" th:object="${url}">
-                        <td th:text="*{getId()}"></td>
-                        <td><a th:href="@{/urls/{id}(id=*{getId()})}" th:text="*{getName()}"></a></td>
-                        <td></td>
-                        <td></td>
-<!--                        <td th:text="*{getCreatedAt()}"></td>-->
-<!--                        <td th:text="*{getStatusCode()}"></td>-->
-                    </tr>
-                    </tbody>
+                <tbody>
+                <tr th:each="url : ${urls}" th:object="${url}">
+                    <td th:text="*{getId()}"></td>
+                    <td><a th:href="@{/urls/{id}(id=*{getId()})}" th:text="*{getName()}"></a></td>
+                    <td th:text="${#temporals.format(url.getLastCheckDate(), 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="*{getLastCheckStatus}"></td>
+                </tr>
+                </tbody>
             </table>
 
             <nav aria-label="Page navigation">

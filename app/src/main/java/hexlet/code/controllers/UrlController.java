@@ -4,15 +4,19 @@ import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
 
+import io.ebean.PagedList;
 import io.javalin.http.Handler;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -28,16 +32,7 @@ public class UrlController {
         ctx.render("urls/urls.html");
     };
 
-    public static Handler showUrl = ctx -> {
-        long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
-        Url url = new QUrl()
-                .id.equalTo(id)
-                .findOne();
-
-        ctx.attribute("url", url);
-        ctx.render("urls/show.html");
-    };
     public static Handler addUrl = ctx -> {
         String urlFromPost = ctx.formParam("url");
 
@@ -53,7 +48,7 @@ public class UrlController {
             if (checkUrl != null) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
                 ctx.sessionAttribute("flash-type", "danger");
-                ctx.redirect("/urls");
+                ctx.redirect("/");
                 return;
             }
 
@@ -68,6 +63,17 @@ public class UrlController {
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
         }
+    };
+
+    public static Handler showUrl = ctx -> {
+        long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
+
+        Url url = new QUrl()
+                .id.equalTo(id)
+                .findOne();
+
+        ctx.attribute("url", url);
+        ctx.render("urls/show.html");
     };
 
 
@@ -95,9 +101,11 @@ public class UrlController {
                 ? Objects.requireNonNull(body.selectFirst("meta[name=description]")).attr("content")
                 : null;
 
-        UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
-        urlCheck.save();
+        UrlCheck urlChecks = new UrlCheck(statusCode, title, h1, description, url);
+        urlChecks.save();
 
+        ctx.sessionAttribute("flash", "Страница успешно проверена");
+        ctx.sessionAttribute("flash-type", "success");
         ctx.redirect("/urls/" + id);
     };
 }

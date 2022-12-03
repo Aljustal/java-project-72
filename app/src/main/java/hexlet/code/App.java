@@ -42,9 +42,7 @@ public final class App {
                 post(UrlController.addUrl);
                 path("{id}", () -> {
                     get(UrlController.showUrl);
-                });
-                path("{id}/checks", () -> {
-                    post(UrlController.checkUrl);
+                    post("/checks", UrlController.checkUrl);
                 });
             });
         });
