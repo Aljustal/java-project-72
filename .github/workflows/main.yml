@@ -1,3 +1,4 @@
+
 name: Build
 on: push
 jobs:
@@ -9,14 +10,12 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Build with Gradle
-          run: make build
-          with:
-            build-root-directory: app
+      - name: run Gradle build
+        run: make build
       - name: get coverage report
         uses: paambaati/codeclimate-action@v3.0.0
         env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+          CC_TEST_REPORTER_ID: ${{secrets.CODE_CLIMATE}}
           JACOCO_SOURCE_PATH: ${{github.workspace}}/app/src/main/java
         with:
           coverageCommand: make report
