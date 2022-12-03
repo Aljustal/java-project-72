@@ -4,15 +4,13 @@ import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
 
-import io.ebean.PagedList;
+import hexlet.code.domain.query.QUrlCheck;
 import io.javalin.http.Handler;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -29,7 +27,7 @@ public class UrlController {
                 .findList();
 
         ctx.attribute("urls", urls);
-        ctx.render("urls/urls.html");
+        ctx.render("urls.html");
     };
 
 
@@ -48,7 +46,7 @@ public class UrlController {
             if (checkUrl != null) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
                 ctx.sessionAttribute("flash-type", "danger");
-                ctx.redirect("/");
+                ctx.redirect("/urls");
                 return;
             }
 
@@ -56,6 +54,7 @@ public class UrlController {
             url.save();
 
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.sessionAttribute("flash-type", "success");
             ctx.redirect("/urls");
 
         } catch (MalformedURLException e) {
@@ -72,8 +71,14 @@ public class UrlController {
                 .id.equalTo(id)
                 .findOne();
 
+        List<UrlCheck> urlChecks = new QUrlCheck()
+                .url.equalTo(url)
+                .orderBy().id.desc()
+                .findList();
+
+        ctx.attribute("urlChecks", urlChecks);
         ctx.attribute("url", url);
-        ctx.render("urls/show.html");
+        ctx.render("show.html");
     };
 
 
@@ -101,8 +106,8 @@ public class UrlController {
                 ? Objects.requireNonNull(body.selectFirst("meta[name=description]")).attr("content")
                 : null;
 
-        UrlCheck urlChecks = new UrlCheck(statusCode, title, h1, description, url);
-        urlChecks.save();
+        UrlCheck check = new UrlCheck(statusCode, title, h1, description, url);
+        check .save();
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "success");

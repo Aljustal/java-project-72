@@ -28,6 +28,7 @@ public final class App {
         templateEngine.addDialect(new Java8TimeDialect());
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/templates/");
+        templateResolver.setCharacterEncoding("UTF-8");
         templateEngine.addTemplateResolver(templateResolver);
 
         return templateEngine;
