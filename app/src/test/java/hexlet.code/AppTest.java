@@ -2,7 +2,9 @@ package hexlet.code;
 
 import hexlet.code.domain.Url;
 
+import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
+import hexlet.code.domain.query.QUrlCheck;
 import io.ebean.DB;
 import io.ebean.Database;
 import io.javalin.Javalin;
@@ -12,14 +14,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class AppTest {
     private static Javalin app;
     private static String baseUrl;
+    private static Database database;
+    private static final String FIXTURES_DIRECTORY = "src/test/resources/fixtures";
 
     @BeforeAll
     public static void beforeAll() {
@@ -27,17 +37,18 @@ public class AppTest {
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
+        database = DB.getDefault();
     }
 
     @AfterAll
     public static void afterAll() {
+        database.script().run("/truncate.sql");
         app.stop();
     }
 
     @BeforeEach
     void beforeEach() {
-        Database db = DB.getDefault();
-        db.truncate("url");
+        database.script().run("/truncate.sql");
         Url existingUrl = new Url("https://www.youtube.com");
         existingUrl.save();
     }
@@ -45,28 +56,14 @@ public class AppTest {
 
     @Test
     void testUrls() {
-        // Выполняем GET запрос на адрес http://localhost:port/urls
         HttpResponse<String> response = Unirest
                 .get(baseUrl + "/urls")
                 .asString();
-        // Получаем тело ответа
         String content = response.getBody();
 
-        // Проверяем код ответа
         assertThat(response.getStatus()).isEqualTo(200);
-        // Проверяем, что страница содержит определенный текст
         assertThat(response.getBody()).contains("https://www.youtube.com");
     }
-
-    @Test
-    void testNewUrl() {
-        HttpResponse<String> response = Unirest
-                .get(baseUrl + "/url/new")
-                .asString();
-
-        assertThat(response.getStatus()).isEqualTo(200);
-    }
-
     @Test
     void testAddUrl() {
         HttpResponse<String> responsePost = Unirest
@@ -74,7 +71,6 @@ public class AppTest {
                 .field("name", "https://www.youtube.com")
                 .asString();
 
-        // Проверяем статус ответа
         assertThat(responsePost.getStatus()).isEqualTo(500);
 
         Url actualUrl = new QUrl()
@@ -91,11 +87,51 @@ public class AppTest {
                 .field("name", "httpppps://www.youtube.com")
                 .asString();
 
-        //assertThat(responsePost.getBody()).contains("Некорректный URL");
-
         Url actualUrl = new QUrl()
                 .name.equalTo("httpppps://www.youtube.com")
                 .findOne();
         assertThat(actualUrl).isNull();
     }
+    @Test
+    void checkUrl() throws IOException {
+        String samplePage = Files.readString(Paths.get(FIXTURES_DIRECTORY, "sample.html"));
+
+        MockWebServer mockServer = new MockWebServer();
+        String samplePageUrl = mockServer.url("/").toString();
+        mockServer.enqueue(new MockResponse().setBody(samplePage));
+
+        HttpResponse response = Unirest
+                .post(baseUrl + "/urls/")
+                .field("url", samplePageUrl)
+                .asEmpty();
+
+        Url url = new QUrl()
+                .name.equalTo(samplePageUrl.substring(0, samplePageUrl.length() - 1))
+                .findOne();
+
+        assertThat(url).isNotNull();
+
+        HttpResponse response1 = Unirest
+                .post(baseUrl + "/urls/" + url.getId() + "/checks")
+                .asEmpty();
+
+        HttpResponse<String> response2 = Unirest
+                .get(baseUrl + "/urls/" + url.getId())
+                .asString();
+
+
+        UrlCheck check = new QUrlCheck()
+                .findList().get(0);
+
+        assertThat(check).isNotNull();
+        assertThat(check.getUrl().getId()).isEqualTo(url.getId());
+
+        assertThat(response2.getBody()).contains("Sample title");
+        assertThat(response2.getBody()).contains("Sample description");
+        assertThat(response2.getBody()).contains("Sample header");
+
+        mockServer.shutdown();
+    }
 }
+
+
