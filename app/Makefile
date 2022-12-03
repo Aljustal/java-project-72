@@ -24,7 +24,7 @@ report:
 lint:
 	./gradlew checkstyleMain checkstyleTest
 
-refresh-deps:
+make :
 	./gradlew clean build --refresh-dependencies
 
 start:
