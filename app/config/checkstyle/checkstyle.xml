@@ -34,7 +34,8 @@
     <!-- Excludes all 'module-info.java' files              -->
     <!-- See https://checkstyle.org/config_filefilters.html -->
     <module name="BeforeExecutionExclusionFileFilter">
-        <property name="fileNamePattern" value="module\-info\.java$"/>
+<!--        <property name="fileNamePattern" value="module\-info\.java$"/>-->
+        <property name="fileNamePattern" value="app/build"/>
     </module>
 
     <!-- https://checkstyle.org/config_filters.html#SuppressionFilter -->
@@ -42,6 +43,7 @@
         <property name="file" value="${org.checkstyle.sun.suppressionfilter.config}"
                   default="checkstyle-suppressions.xml" />
         <property name="optional" value="true"/>
+        <property name="file" value="app/build"/>
     </module>
 
     <!-- Checks that a package-info.java file exists for each package.     -->

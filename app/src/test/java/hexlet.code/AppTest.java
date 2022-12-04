@@ -25,11 +25,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class AppTest {
+public final class AppTest {
     private static Javalin app;
     private static String baseUrl;
     private static Database database;
     private static final String FIXTURES_DIRECTORY = "src/test/resources/fixtures";
+    private final int status200 = 200;
+    private final int status500 = 500;
 
     @BeforeAll
     public static void beforeAll() {
@@ -61,7 +63,7 @@ public class AppTest {
                 .asString();
         String content = response.getBody();
 
-        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getStatus()).isEqualTo(status200);
         assertThat(response.getBody()).contains("https://www.youtube.com");
     }
     @Test
@@ -71,7 +73,7 @@ public class AppTest {
                 .field("name", "https://www.youtube.com")
                 .asString();
 
-        assertThat(responsePost.getStatus()).isEqualTo(500);
+        assertThat(responsePost.getStatus()).isEqualTo(status500);
 
         Url actualUrl = new QUrl()
                 .name.equalTo("https://www.youtube.com")

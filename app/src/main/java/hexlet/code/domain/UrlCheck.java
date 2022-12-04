@@ -25,12 +25,12 @@ public final class UrlCheck extends Model {
     private Url url;
 
 
-    public UrlCheck(int statusCode, String title, String h1, String description, Url url) {
-        this.statusCode = statusCode;
-        this.title = title;
-        this.h1 = h1;
-        this.description = description;
-        this.url = url;
+    public UrlCheck(int newStatusCode, String newTitle, String newH1, String newDescription, Url newUrl) {
+        this.statusCode = newStatusCode;
+        this.title = newTitle;
+        this.h1 = newH1;
+        this.description = newDescription;
+        this.url = newUrl;
     }
 
     public long getId() {
