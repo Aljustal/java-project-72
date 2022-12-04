@@ -9,3 +9,6 @@ ebean:
   development:
     migration:
       run: true
+  production:
+    migration:
+      run: true
