@@ -20,7 +20,7 @@ import org.jsoup.nodes.Document;
 
 public class UrlController {
 
-    public static Handler listUrls = ctx -> {
+    public static final Handler LIST_URLS = ctx -> {
         List<Url> urls = new QUrl()
                 .orderBy()
                 .id.asc()
@@ -31,7 +31,7 @@ public class UrlController {
     };
 
 
-    public static Handler addUrl = ctx -> {
+    public static final Handler ADD_URL = ctx -> {
         String urlFromPost = ctx.formParam("url");
 
         try {
@@ -64,7 +64,7 @@ public class UrlController {
         }
     };
 
-    public static Handler showUrl = ctx -> {
+    public static final Handler SHOW_URL = ctx -> {
         long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
         Url url = new QUrl()
@@ -82,7 +82,7 @@ public class UrlController {
     };
 
 
-    public static Handler checkUrl = ctx -> {
+    public static final Handler CHECK_URL = ctx -> {
         long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
         Url url = new QUrl()
