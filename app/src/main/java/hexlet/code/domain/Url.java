@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
-public class Url extends Model {
+public final class Url extends Model {
     @Id
     private long  id;
     private String name;
@@ -29,10 +29,6 @@ public class Url extends Model {
 
     public String getName() {
         return name;
-    }
-
-    public void setName (String urlName) {
-        this.name = urlName;
     }
     public Instant getCreatedAt() {
         return createdAt;
