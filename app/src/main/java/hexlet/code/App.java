@@ -21,6 +21,14 @@ public final class App {
         String port = System.getenv().getOrDefault("PORT", "5000");
         return Integer.parseInt(port);
     }
+    private static String getMode() {
+        return System.getenv().getOrDefault("APP_ENV", "development");
+    }
+
+    private static boolean isProduction() {
+        return getMode().equals("production");
+    }
+
 
     private static TemplateEngine getTemplateEngine() {
         TemplateEngine templateEngine = new TemplateEngine();
@@ -51,6 +59,10 @@ public final class App {
 
     public static Javalin getApp() {
         Javalin app = Javalin.create(config -> {
+            if (!isProduction()) {
+                config.enableDevLogging();
+            }
+
             config.enableDevLogging();
             JavalinThymeleaf.configure(getTemplateEngine());
         });
