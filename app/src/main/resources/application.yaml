@@ -7,7 +7,8 @@ datasource:
   production:
     username: ${PGUSER}
     password: ${PGPASSWORD}
-    url: ${DATABASE_URL}
+#    url: ${DATABASE_URL}
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
 
 ebean:
   development:
