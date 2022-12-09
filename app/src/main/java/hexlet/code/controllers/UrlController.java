@@ -5,12 +5,14 @@ import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
 
 import hexlet.code.domain.query.QUrlCheck;
+import io.ebean.PagedList;
 import io.javalin.http.Handler;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -21,12 +23,29 @@ import org.jsoup.nodes.Document;
 public class UrlController {
 
     public static final Handler LIST_URLS = ctx -> {
-        List<Url> urls = new QUrl()
+        int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1) - 1;
+        final int entriesPerPage = 10;
+
+        PagedList<Url> pagedUrls = new QUrl()
+                .setFirstRow(page * entriesPerPage)
+                .setMaxRows(entriesPerPage)
                 .orderBy()
                 .id.asc()
-                .findList();
+                .findPagedList();
+
+        List<Url> urls = pagedUrls.getList();
+
+        int lastPage = pagedUrls.getTotalPageCount() + 1;
+        int currentPage = pagedUrls.getPageIndex() + 1;
+
+        List<Integer> pages = IntStream
+                .range(1, lastPage)
+                .boxed()
+                .toList();
 
         ctx.attribute("urls", urls);
+        ctx.attribute("pages", pages);
+        ctx.attribute("currentPage", currentPage);
         ctx.render("urls.html");
     };
 
