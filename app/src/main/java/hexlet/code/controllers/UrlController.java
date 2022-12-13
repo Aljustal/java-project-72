@@ -109,8 +109,10 @@ public class UrlController {
                 .id.equalTo(id)
                 .findOne();
 
+        HttpResponse<String> response;
         try {
-            HttpResponse<String> response = Unirest
+            assert url != null;
+            response = Unirest
                     .get(url.getName())
                     .asString();
 
@@ -135,8 +137,9 @@ public class UrlController {
         } catch (UnirestException e) {
             ctx.sessionAttribute("flash", "Не удалось проверить страницу");
             ctx.sessionAttribute("flash-type", "danger");
+        } finally {
+            ctx.redirect("/urls/" + id);
         }
-        ctx.redirect("/urls/" + id);
     };
 }
 

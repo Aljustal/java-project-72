@@ -24,7 +24,7 @@ report:
 lint:
 	./gradlew checkstyleMain checkstyleTest
 
-make :
+make:
 	./gradlew clean build --refresh-dependencies
 
 start:
@@ -34,5 +34,4 @@ start-dist:
 	APP_ENV=production ./build/install/app/bin/app
 
 build-run: build run
-
 .PHONY: build
