@@ -17,6 +17,7 @@ import java.util.stream.IntStream;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
+import kong.unirest.UnirestException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -108,28 +109,33 @@ public class UrlController {
                 .id.equalTo(id)
                 .findOne();
 
-        HttpResponse<String> response = Unirest
-                .get(url.getName())
-                .asString();
+        try {
+            HttpResponse<String> response = Unirest
+                    .get(url.getName())
+                    .asString();
 
-        String content = response.getBody();
+            String content = response.getBody();
 
-        Document body = Jsoup.parse(content);
+            Document body = Jsoup.parse(content);
 
-        int statusCode = response.getStatus();
-        String title = body.title();
-        String h1 = body.selectFirst("h1") != null
-                ? Objects.requireNonNull(body.selectFirst("h1")).text()
-                : null;
-        String description = body.selectFirst("meta[name=description]") != null
-                ? Objects.requireNonNull(body.selectFirst("meta[name=description]")).attr("content")
-                : null;
+            int statusCode = response.getStatus();
+            String title = body.title();
+            String h1 = body.selectFirst("h1") != null
+                    ? Objects.requireNonNull(body.selectFirst("h1")).text()
+                    : null;
+            String description = body.selectFirst("meta[name=description]") != null
+                    ? Objects.requireNonNull(body.selectFirst("meta[name=description]")).attr("content")
+                    : null;
 
-        UrlCheck check = new UrlCheck(statusCode, title, h1, description, url);
-        check .save();
+            UrlCheck check = new UrlCheck(statusCode, title, h1, description, url);
+            check .save();
 
-        ctx.sessionAttribute("flash", "Страница успешно проверена");
-        ctx.sessionAttribute("flash-type", "success");
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
+            ctx.sessionAttribute("flash-type", "success");
+        } catch (UnirestException e) {
+            ctx.sessionAttribute("flash", "Не удалось проверить страницу");
+            ctx.sessionAttribute("flash-type", "danger");
+        }
         ctx.redirect("/urls/" + id);
     };
 }
